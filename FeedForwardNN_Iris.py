@@ -28,12 +28,16 @@ vectorized inorder to act linear component wise over matricies and vectors i.e n
 to limit non matrix operations. Each collection of weights connecting a pair of layers as well
 as biases associated to each output unit were represented as a matrix. Utiliztion of matrix 
 operations gave the advantage of varying the number of neurons in the hidden layer. 
+
+"""
+import numpy as np
 import pandas as pd
 from sklearn import model_selection
 from scipy.special import expit as sigmoid
-"""
 
-
+#----------------------------------------------------------------------------------------------------------------#
+#--------------------------------------- Defining Functions -----------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------#
 def class_representation_change(flower_type):
 #Alter Flower Name to Binary Vector Representation.
 	if flower_type == "Iris-setosa":
@@ -99,6 +103,8 @@ def Construct_Biases(layer_info,output_size):
 	n = len(layer_info)-1
 	Biases.append(np.random.uniform(low=interval[0], high=interval[1], size=(output_size)))
 	return Biases
+
+#----------------------------------------------------------------------------------------------------------------#
 
 
 #-------------------------------#

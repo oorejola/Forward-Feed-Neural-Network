@@ -1,37 +1,9 @@
 
-"""
-Fun Implemenation of Fully Connected Forward Feed Neural Network.
-Using the Iris Data Set I will implemented a Feed Forward Neural Network as well as train using Back Propogation
-and Stocastic Gradient Descent as our training rule.
-
-Author: Oliver Orejola
-
-
-Parameters:
-- Variable number of hidden layers and number of neurons per hidden layer
-- Initialized weight matricies and biases can have varied interval of random numbers( e.g [-0.05,0.05] )
-- Learning rate
-- Number of Training Epochs
-
-
-
-
-Authors notes:
-
-Class representaiton was changed to a vector (e.g [1,0,0] = "Iris-setosa") to represent 
-the 3 output nodes rather than use one output node and partition the range of a single 
-node and interpret each interval as a certain class. (e.g if output in [0.0,0.333] 
-interpret as "Iris-setosa"). It was a goal to minmize index chasing and preserve all
-calculations in the form of matricies: often used in FeedForward and Back Propogation 
-were matrix products, dot products, as well as outer products. Multiple functions were 
-vectorized inorder to act linear component wise over matricies and vectors i.e numpy arrays
-to limit non matrix operations. Each collection of weights connecting a pair of layers as well
-as biases associated to each output unit were represented as a matrix. Utiliztion of matrix 
-operations gave the advantage of varying the number of neurons in the hidden layer. 
+import numpy as np
 import pandas as pd
 from sklearn import model_selection
 from scipy.special import expit as sigmoid
-"""
+
 
 
 def class_representation_change(flower_type):
