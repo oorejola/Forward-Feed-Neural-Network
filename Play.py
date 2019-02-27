@@ -41,16 +41,12 @@ def BackPropogation(x_in, weights,biases,t,R):
 	
 	for i in range(n)[1:]:
 		error_terms.insert(0, outputs[n-1-i]*(1-outputs[n-1-i])*(weights[n-i].T).dot(error_terms[len(error_terms)-i]))
+	
 	new_weights = [weights[i] + R * np.outer(error_terms[i],outputs[i-1]) for i in range(n)[1:]]
 	new_weights.insert(0,weights[0]+ R * np.outer(error_terms[0],x_in))
-	#w_2 = w_2 + R *np.outer(error_term_2,o_1)
-	#w_1 = w_1 + R * np.outer(error_term_1,x_in)
-	#b_2 = b_2 + R * error_term_2
-	#b_1 = b_1 + R * error_term_1
-	#return w_1,w_2,b_1,b_2
-	for x in new_weights:
-		print x.shape
-	return error_terms
+	new_biases = [biases[i] + R * error_terms[i] for i in range(n)]
+
+	return new_weights, new_biases
 
 def Construct_Weights(layer_info,input_size,output_size):
 	interval = [-0.05,0.1]
@@ -74,10 +70,12 @@ def Construct_Biases(layer_info,output_size):
 
 
 
-Layers = [2,3,5]
+Layers = [4,2,3]
 In_size = 4
 Out_size = 3
 Rate = 0.05
+Num_Epochs = 1000
+
 
 print Layers[-1:][0]
 yaya= Construct_Weights(Layers,In_size,Out_size)
@@ -91,12 +89,24 @@ results = FeedForward([1,0,.4,2],yaya,Biases)
 for x in results:
 	print x.shape
 
-pp = BackPropogation([1,0,.4,2],yaya,Biases,[1,0,0],Rate)
-for x in pp:
-	print x.shape, x
+Weights, Biases = BackPropogation([1,0,.4,2],yaya,Biases,[1,0,0],Rate)
+for x in Weights:
+	print x.shape
 
-p=[x for x in Layers[1:]]
-p.insert(0,1)
-for i in range(len(p)):
-	print i
-print p	
+for x in Biases:
+	print x.shape
+
+#ForwardFeedNetworkDetails
+print "\n"
+print "Network Details: "
+print"-"*30
+print "Input Size: %d" % In_size
+print "Output Classifier Size: %d" % Out_size
+print "Number of Hidden Layers: %d" %len(Layers)
+for i in range(len(Layers)):
+	print "  Hidden Layer %d: %d neurons" % (i+1 , Layers[i])
+print "\n"
+print "Learning Rate: %f" %Rate
+
+
+
