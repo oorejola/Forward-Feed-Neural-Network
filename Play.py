@@ -36,7 +36,6 @@ def BackPropogation(x_in, weights,biases,t,R):
 	# t = Target Output, R = Learning Rate
 	outputs = FeedForward(x_in,weights,biases)
 	n = len(outputs)
-	print outputs[n-1]
 	error_terms = [outputs[n-1]*(1-outputs[n-1])*(t-outputs[n-1])]
 	
 	for i in range(n)[1:]:
@@ -69,34 +68,68 @@ def Construct_Biases(layer_info,output_size):
 	return Biases
 
 
+#-------------------------------#
+#-- Import Data Using Pandas. --#
+#-------------------------------#
+names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'class']
+irisdata = pd.read_csv("iris.csv",header = None, names = names)
 
-Layers = [4,2,3]
+#splitting dataset to validation and train
+X = irisdata.values[:,:4] 	#Input Features
+Y = irisdata.values[:,4]	#Classes
+
+#Change Classes to binary vectors representing each Iris Class
+Y = np.array([ class_representation_change(x) for x in Y])
+
+
+#use train_test_split from mode_selection to randomize ordered data and split data to test on 30% Test and 70% Train of the data set
+X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y, test_size=0.30, random_state=7)
+#-------------------------------#
+
+Layers = [2,3]
 In_size = 4
 Out_size = 3
-Rate = 0.05
-Num_Epochs = 1000
+Rate = .45
+Num_Epochs = 600
 
+#-----------------------------------#
+#-- Initialize Weights and Biases --#
+#-----------------------------------#
+print "\n"*2
+print "Initialize Weights and Biases."
 
-print Layers[-1:][0]
-yaya= Construct_Weights(Layers,In_size,Out_size)
-for x in yaya:
-	print x.shape
+Weights = Construct_Weights(Layers,In_size,Out_size)
 Biases = Construct_Biases(Layers,Out_size)
-for x in Biases:
-	print x.shape
-print "\n"
-results = FeedForward([1,0,.4,2],yaya,Biases)
-for x in results:
-	print x.shape
+W_in = Weights
 
-Weights, Biases = BackPropogation([1,0,.4,2],yaya,Biases,[1,0,0],Rate)
-for x in Weights:
-	print x.shape
 
-for x in Biases:
-	print x.shape
+#----------------------------------#
+#-------------- Train  ------------#
+#----------------------------------#
+print "Begin Training.\n"
+for j in range(Num_Epochs):
+	for i in range(len(X_train)):
+		Weights, Biases = BackPropogation(X_train[i],Weights,Biases, Y_train[i], Rate)
+	if (j+1)%100 == 0:
+		print "Training on Epoch: %d"% (j+1)
+print "\n"*2
 
-#ForwardFeedNetworkDetails
+#----------------------------------#
+#---------- Test Accuracy  --------#
+#----------------------------------#
+
+Test_Accuracy = 0.0
+for i in range(len(X_validation)):
+	if np.array_equal(Thresh(FeedForward(X_validation[i],Weights,Biases)[-1:][0]), Y_validation[i]):
+		Test_Accuracy+=1
+Test_Accuracy = Test_Accuracy/len(X_validation)
+print "Accuracy on test data %f" % Test_Accuracy
+print "Learning rate: %f" % Rate
+print "Number of Epochs: %d" % Num_Epochs
+
+#----------------------------------#
+#-- Forward Feed Network Details --#
+#----------------------------------#
 print "\n"
 print "Network Details: "
 print"-"*30
@@ -107,6 +140,10 @@ for i in range(len(Layers)):
 	print "  Hidden Layer %d: %d neurons" % (i+1 , Layers[i])
 print "\n"
 print "Learning Rate: %f" %Rate
+
+#----------------------------------#
+#---- Network Training Details ----#
+#----------------------------------#
 
 
 
