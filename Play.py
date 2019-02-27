@@ -1,8 +1,37 @@
-import numpy as np
+
+"""
+Fun Implemenation of Fully Connected Forward Feed Neural Network.
+Using the Iris Data Set I will implemented a Feed Forward Neural Network as well as train using Back Propogation
+and Stocastic Gradient Descent as our training rule.
+
+Author: Oliver Orejola
+
+
+Parameters:
+- Variable number of hidden layers and number of neurons per hidden layer
+- Initialized weight matricies and biases can have varied interval of random numbers( e.g [-0.05,0.05] )
+- Learning rate
+- Number of Training Epochs
+
+
+
+
+Authors notes:
+
+Class representaiton was changed to a vector (e.g [1,0,0] = "Iris-setosa") to represent 
+the 3 output nodes rather than use one output node and partition the range of a single 
+node and interpret each interval as a certain class. (e.g if output in [0.0,0.333] 
+interpret as "Iris-setosa"). It was a goal to minmize index chasing and preserve all
+calculations in the form of matricies: often used in FeedForward and Back Propogation 
+were matrix products, dot products, as well as outer products. Multiple functions were 
+vectorized inorder to act linear component wise over matricies and vectors i.e numpy arrays
+to limit non matrix operations. Each collection of weights connecting a pair of layers as well
+as biases associated to each output unit were represented as a matrix. Utiliztion of matrix 
+operations gave the advantage of varying the number of neurons in the hidden layer. 
 import pandas as pd
 from sklearn import model_selection
 from scipy.special import expit as sigmoid
-
+"""
 
 
 def class_representation_change(flower_type):
@@ -31,6 +60,10 @@ def Threshold(X):
 	else:
 		return 0
 Thresh = np.vectorize(Threshold)
+
+# Back propogation training is based on Stochastic Graident Descent
+# i.e The weights and biases are updated based on the data recieved and error calculated
+# for a particular instance of data.
 
 def BackPropogation(x_in, weights,biases,t,R):
 	# t = Target Output, R = Learning Rate
@@ -90,7 +123,7 @@ Layers = [2,3]
 In_size = 4
 Out_size = 3
 Rate = .45
-Num_Epochs = 600
+Num_Epochs = 1000
 
 #-----------------------------------#
 #-- Initialize Weights and Biases --#
@@ -115,7 +148,7 @@ for j in range(Num_Epochs):
 print "\n"*2
 
 #----------------------------------#
-#---------- Test Accuracy  --------#
+#--- Test and Train Accuracy  -----#
 #----------------------------------#
 
 Test_Accuracy = 0.0
@@ -124,8 +157,8 @@ for i in range(len(X_validation)):
 		Test_Accuracy+=1
 Test_Accuracy = Test_Accuracy/len(X_validation)
 print "Accuracy on test data %f" % Test_Accuracy
-print "Learning rate: %f" % Rate
-print "Number of Epochs: %d" % Num_Epochs
+print"-"*30
+
 
 #----------------------------------#
 #-- Forward Feed Network Details --#
@@ -138,12 +171,15 @@ print "Output Classifier Size: %d" % Out_size
 print "Number of Hidden Layers: %d" %len(Layers)
 for i in range(len(Layers)):
 	print "  Hidden Layer %d: %d neurons" % (i+1 , Layers[i])
-print "\n"
-print "Learning Rate: %f" %Rate
 
 #----------------------------------#
 #---- Network Training Details ----#
 #----------------------------------#
-
-
+print "\n"
+print "Network Training Details: "
+print "-"*30
+print "Number of Data Points Used to Train : %d" % len(X_train)
+print "Learning rate: %f" % Rate
+print "Number of Epochs: %d" % Num_Epochs
+print "\n"
 

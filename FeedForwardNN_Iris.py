@@ -119,6 +119,10 @@ Y = np.array([ class_representation_change(x) for x in Y])
 X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y, test_size=0.30, random_state=7)
 #-------------------------------#
 
+
+#-----------------------------------#
+#------------ Parameters -----------#
+#-----------------------------------#
 Layers = [2,3]
 In_size = 4
 Out_size = 3
