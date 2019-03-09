@@ -106,90 +106,93 @@ def Construct_Biases(layer_info,output_size):
 
 #----------------------------------------------------------------------------------------------------------------#
 
+def main():
 
 #-------------------------------#
 #-- Import Data Using Pandas. --#
 #-------------------------------#
-names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'class']
-irisdata = pd.read_csv("iris.csv",header = None, names = names)
+	names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'class']
+	irisdata = pd.read_csv("iris.csv",header = None, names = names)
 
 #splitting dataset to validation and train
-X = irisdata.values[:,:4] 	#Input Features
-Y = irisdata.values[:,4]	#Classes
+	X = irisdata.values[:,:4] 	#Input Features
+	Y = irisdata.values[:,4]	#Classes
 
 #Change Classes to binary vectors representing each Iris Class
-Y = np.array([ class_representation_change(x) for x in Y])
+	Y = np.array([ class_representation_change(x) for x in Y])
 
 
 #use train_test_split from mode_selection to randomize ordered data and split data to test on 30% Test and 70% Train of the data set
-X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y, test_size=0.30, random_state=7)
+	X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y, test_size=0.30, random_state=7)
 #-------------------------------#
 
 
 #-----------------------------------#
 #------------ Parameters -----------#
 #-----------------------------------#
-Layers = [2,3]
-In_size = 4
-Out_size = 3
-Rate = .45
-Num_Epochs = 1000
+	Layers = [2,3]
+	In_size = 4
+	Out_size = 3
+	Rate = .45
+	Num_Epochs = 1000
 
 #-----------------------------------#
 #-- Initialize Weights and Biases --#
 #-----------------------------------#
-print "\n"*2
-print "Initialize Weights and Biases."
+	print "\n"*2
+	print "Initialize Weights and Biases."
 
-Weights = Construct_Weights(Layers,In_size,Out_size)
-Biases = Construct_Biases(Layers,Out_size)
-W_in = Weights
+	Weights = Construct_Weights(Layers,In_size,Out_size)
+	Biases = Construct_Biases(Layers,Out_size)
+	W_in = Weights
 
 
 #----------------------------------#
 #-------------- Train  ------------#
 #----------------------------------#
-print "Begin Training.\n"
-for j in range(Num_Epochs):
-	for i in range(len(X_train)):
-		Weights, Biases = BackPropogation(X_train[i],Weights,Biases, Y_train[i], Rate)
-	if (j+1)%100 == 0:
-		print "Training on Epoch: %d"% (j+1)
-print "\n"*2
+	print "Begin Training.\n"
+	for j in range(Num_Epochs):
+		for i in range(len(X_train)):
+			Weights, Biases = BackPropogation(X_train[i],Weights,Biases, Y_train[i], Rate)
+		if (j+1)%100 == 0:
+			print "Training on Epoch: %d"% (j+1)
+	print "\n"*2
 
 #----------------------------------#
 #--- Test and Train Accuracy  -----#
 #----------------------------------#
 
-Test_Accuracy = 0.0
-for i in range(len(X_validation)):
-	if np.array_equal(Thresh(FeedForward(X_validation[i],Weights,Biases)[-1:][0]), Y_validation[i]):
-		Test_Accuracy+=1
-Test_Accuracy = Test_Accuracy/len(X_validation)
-print "Accuracy on test data %f" % Test_Accuracy
-print"-"*30
+	Test_Accuracy = 0.0
+	for i in range(len(X_validation)):
+		if np.array_equal(Thresh(FeedForward(X_validation[i],Weights,Biases)[-1:][0]), Y_validation[i]):
+			Test_Accuracy+=1
+	Test_Accuracy = Test_Accuracy/len(X_validation)
+	print "Accuracy on test data %f" % Test_Accuracy
+	print"-"*30
 
 
 #----------------------------------#
 #-- Forward Feed Network Details --#
 #----------------------------------#
-print "\n"
-print "Network Details: "
-print"-"*30
-print "Input Size: %d" % In_size
-print "Output Classifier Size: %d" % Out_size
-print "Number of Hidden Layers: %d" %len(Layers)
-for i in range(len(Layers)):
-	print "  Hidden Layer %d: %d neurons" % (i+1 , Layers[i])
+	print "\n"
+	print "Network Details: "
+	print"-"*30
+	print "Input Size: %d" % In_size
+	print "Output Classifier Size: %d" % Out_size
+	print "Number of Hidden Layers: %d" %len(Layers)
+	for i in range(len(Layers)):
+		print "  Hidden Layer %d: %d neurons" % (i+1 , Layers[i])
 
 #----------------------------------#
 #---- Network Training Details ----#
 #----------------------------------#
-print "\n"
-print "Network Training Details: "
-print "-"*30
-print "Number of Data Points Used to Train : %d" % len(X_train)
-print "Learning rate: %f" % Rate
-print "Number of Epochs: %d" % Num_Epochs
-print "\n"
-
+	print "\n"
+	print "Network Training Details: "
+	print "-"*30
+	print "Number of Data Points Used to Train : %d" % len(X_train)
+	print "Learning rate: %f" % Rate
+	print "Number of Epochs: %d" % Num_Epochs
+	print "\n"
+	
+if __name__== "__main__":
+  main()
