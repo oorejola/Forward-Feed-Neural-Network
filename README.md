@@ -7,6 +7,6 @@ It was important for me to gather a better mathematical idea of the FFNN and Bac
 better /optimized tools. I.e TensorFlow, PyTorch, etc. 
 
 To update:
-  Construct NN Class
-  Update indecies for backpropogation algorithm for Stochastic Gradient Descent (SGD) for improved readability 
-  Completely Classify FFNN following E Fiesler's paper "Neural Network Classification and Formalization"
+-Construct NN Class
+-Update indecies for backpropogation algorithm for Stochastic Gradient Descent (SGD) for improved readability 
+-Completely Classify FFNN following E Fiesler's paper "Neural Network Classification and Formalization"
