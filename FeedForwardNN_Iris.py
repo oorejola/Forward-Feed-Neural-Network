@@ -50,13 +50,46 @@ def class_representation_change(flower_type):
 #Vectorize The Sigmoid Function inorder to act componentwize on vectors.
 sig = np.vectorize(sigmoid)
 
-#Computation of the Network
-#Takes input vector and returns expected output
-def FeedForward(x_in, weights,biases):
-	outputs = [sig(weights[0].dot(x_in)+biases[0])]
-	for i in range(len(weights))[1:]:
-		outputs.append(sig(weights[i].dot(outputs[i-1])+biases[i]))
-	return outputs
+
+class FFNN:
+
+	def __init__(self,layer_info,input_size,output_size):
+		self.layer = layer_info
+		self.weights = self.Construct_Weights(layer_info,input_size,output_size)
+		self.biases = self.Construct_Biases(layer_info,output_size)
+
+	def Construct_Weights(self,layer_info,input_size,output_size):
+		interval = [-0.05,0.1]
+		np.random.seed(4)
+		Weights = [np.random.uniform(low=interval[0], high=interval[1], size=(layer_info[0],input_size))]
+		for i in range(len(layer_info))[1:]:
+			Weights.append(np.random.uniform(low=interval[0], high=interval[1], size=(layer_info[i],layer_info[i-1])))
+		n = len(layer_info)-1
+		Weights.append(np.random.uniform(low=interval[0], high=interval[1], size=(output_size,layer_info[n])))
+		return Weights
+
+	def Construct_Biases(self,layer_info,output_size):
+		interval = [-0.05,0.1]
+		np.random.seed(4)
+		Biases = [np.random.uniform(low=interval[0], high=interval[1], size=(layer_info[0]))]
+		for i in range(len(layer_info))[1:]:
+			Biases.append(np.random.uniform(low=interval[0], high=interval[1], size=(layer_info[i])))
+		n = len(layer_info)-1
+		Biases.append(np.random.uniform(low=interval[0], high=interval[1], size=(output_size)))
+		return Biases
+	#Computation of the Network
+#Takes input vector and feed forwards the information through network
+	def FeedForward(self,x_in):
+		outputs = [sig(self.weights[0].dot(x_in)+self.biases[0])]
+		for i in range(len(self.weights))[1:]:
+			outputs.append(sig(self.weights[i].dot(outputs[i-1])+self.biases[i]))
+		return outputs
+	
+	def Update_Weights_Biases(self,new_weights,new_biases):
+		self.weights = new_weights
+		self.biases = new_biases
+	
+
 
 def Threshold(X):
 	if X > .5:
@@ -69,40 +102,23 @@ Thresh = np.vectorize(Threshold)
 # i.e The weights and biases are updated based on the data recieved and error calculated
 # for a particular instance of data.
 
-def BackPropogation(x_in, weights,biases,t,R):
+def BackPropogation(x_in, NN ,t,R):
 	# t = Target Output, R = Learning Rate
-	outputs = FeedForward(x_in,weights,biases)
+	outputs = NN.FeedForward(x_in)
 	n = len(outputs)
 	error_terms = [outputs[n-1]*(1-outputs[n-1])*(t-outputs[n-1])]
 	
 	for i in range(n)[1:]:
-		error_terms.insert(0, outputs[n-1-i]*(1-outputs[n-1-i])*(weights[n-i].T).dot(error_terms[len(error_terms)-i]))
+		error_terms.insert(0, outputs[n-1-i]*(1-outputs[n-1-i])*(NN.weights[n-i].T).dot(error_terms[len(error_terms)-i]))
 	
-	new_weights = [weights[i] + R * np.outer(error_terms[i],outputs[i-1]) for i in range(n)[1:]]
-	new_weights.insert(0,weights[0]+ R * np.outer(error_terms[0],x_in))
-	new_biases = [biases[i] + R * error_terms[i] for i in range(n)]
+	new_weights = [NN.weights[i] + R * np.outer(error_terms[i],outputs[i-1]) for i in range(n)[1:]]
+	new_weights.insert(0,NN.weights[0]+ R * np.outer(error_terms[0],x_in))
+	new_biases = [NN.biases[i] + R * error_terms[i] for i in range(n)]
 
 	return new_weights, new_biases
 
-def Construct_Weights(layer_info,input_size,output_size):
-	interval = [-0.05,0.1]
-	np.random.seed(4)
-	Weights = [np.random.uniform(low=interval[0], high=interval[1], size=(layer_info[0],input_size))]
-	for i in range(len(layer_info))[1:]:
-		Weights.append(np.random.uniform(low=interval[0], high=interval[1], size=(layer_info[i],layer_info[i-1])))
-	n = len(layer_info)-1
-	Weights.append(np.random.uniform(low=interval[0], high=interval[1], size=(output_size,layer_info[n])))
-	return Weights
 
-def Construct_Biases(layer_info,output_size):
-	interval = [-0.05,0.1]
-	np.random.seed(4)
-	Biases = [np.random.uniform(low=interval[0], high=interval[1], size=(layer_info[0]))]
-	for i in range(len(layer_info))[1:]:
-		Biases.append(np.random.uniform(low=interval[0], high=interval[1], size=(layer_info[i])))
-	n = len(layer_info)-1
-	Biases.append(np.random.uniform(low=interval[0], high=interval[1], size=(output_size)))
-	return Biases
+
 
 #----------------------------------------------------------------------------------------------------------------#
 
@@ -135,6 +151,35 @@ def main():
 	Out_size = 3
 	Rate = .45
 	Num_Epochs = 1000
+
+	NN = FFNN(Layers,4,3)
+
+#----------------------------------#
+#-------------- Train  ------------#
+#----------------------------------#
+
+	print "Begin Training.\n"
+	for j in range(Num_Epochs):
+		for i in range(len(X_train)):
+			New_Weights, New_Biases = BackPropogation(X_train[i],NN,Y_train[i],Rate)
+			NN.Update_Weights_Biases(New_Weights,New_Biases)
+		if (j+1)%100 == 0:
+			print "Training on Epoch: %d"% (j+1)
+	print "\n"*2
+
+#----------------------------------#
+#--- Test and Train Accuracy  -----#
+#----------------------------------#
+
+	Test_Accuracy = 0.0
+	for i in range(len(X_validation)):
+		if np.array_equal(Thresh(NN.FeedForward(X_validation[i])[-1:][0]), Y_validation[i]):
+			Test_Accuracy+=1
+	Test_Accuracy = Test_Accuracy/len(X_validation)
+	print "Accuracy on test data %f" % Test_Accuracy
+	print"-"*30
+
+"""
 
 #-----------------------------------#
 #-- Initialize Weights and Biases --#
@@ -193,6 +238,6 @@ def main():
 	print "Learning rate: %f" % Rate
 	print "Number of Epochs: %d" % Num_Epochs
 	print "\n"
-	
+"""
 if __name__== "__main__":
   main()
