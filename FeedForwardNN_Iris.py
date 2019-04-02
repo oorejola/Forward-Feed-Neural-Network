@@ -2,7 +2,7 @@
 """
 Fun Implemenation of Fully Connected Forward Feed Neural Network.
 Using the Iris Data Set I will implemented a Feed Forward Neural Network as well as train using Back Propogation
-and Stocastic Gradient Descent as our training rule.
+and Stocastic Gradient Descent as our training rule. Built a very primetive Fully Connected FFNN class.
 
 Author: Oliver Orejola
 
@@ -77,8 +77,8 @@ class FFNN:
 		n = len(layer_info)-1
 		Biases.append(np.random.uniform(low=interval[0], high=interval[1], size=(output_size)))
 		return Biases
-	#Computation of the Network
-#Takes input vector and feed forwards the information through network
+	# Computation of the Network
+	# Takes input vector and feed forwards the information through network
 	def FeedForward(self,x_in):
 		outputs = [sig(self.weights[0].dot(x_in)+self.biases[0])]
 		for i in range(len(self.weights))[1:]:
@@ -127,6 +127,7 @@ def main():
 #-------------------------------#
 #-- Import Data Using Pandas. --#
 #-------------------------------#
+
 	names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'class']
 	irisdata = pd.read_csv("iris.csv",header = None, names = names)
 
@@ -149,16 +150,18 @@ def main():
 	Layers = [2,3]
 	In_size = 4
 	Out_size = 3
-	Rate = .45
+	Rate = .05
 	Num_Epochs = 1000
 
-	NN = FFNN(Layers,4,3)
+# Define Forward Feed Neural Network
+
+	NN = FFNN(Layers,In_size,Out_size)
 
 #----------------------------------#
 #-------------- Train  ------------#
 #----------------------------------#
 
-	print "Begin Training.\n"
+	print "\nBegin Training.\n"
 	for j in range(Num_Epochs):
 		for i in range(len(X_train)):
 			New_Weights, New_Biases = BackPropogation(X_train[i],NN,Y_train[i],Rate)
@@ -179,41 +182,6 @@ def main():
 	print "Accuracy on test data %f" % Test_Accuracy
 	print"-"*30
 
-"""
-
-#-----------------------------------#
-#-- Initialize Weights and Biases --#
-#-----------------------------------#
-	print "\n"*2
-	print "Initialize Weights and Biases."
-
-	Weights = Construct_Weights(Layers,In_size,Out_size)
-	Biases = Construct_Biases(Layers,Out_size)
-	W_in = Weights
-
-
-#----------------------------------#
-#-------------- Train  ------------#
-#----------------------------------#
-	print "Begin Training.\n"
-	for j in range(Num_Epochs):
-		for i in range(len(X_train)):
-			Weights, Biases = BackPropogation(X_train[i],Weights,Biases, Y_train[i], Rate)
-		if (j+1)%100 == 0:
-			print "Training on Epoch: %d"% (j+1)
-	print "\n"*2
-
-#----------------------------------#
-#--- Test and Train Accuracy  -----#
-#----------------------------------#
-
-	Test_Accuracy = 0.0
-	for i in range(len(X_validation)):
-		if np.array_equal(Thresh(FeedForward(X_validation[i],Weights,Biases)[-1:][0]), Y_validation[i]):
-			Test_Accuracy+=1
-	Test_Accuracy = Test_Accuracy/len(X_validation)
-	print "Accuracy on test data %f" % Test_Accuracy
-	print"-"*30
 
 
 #----------------------------------#
@@ -238,6 +206,6 @@ def main():
 	print "Learning rate: %f" % Rate
 	print "Number of Epochs: %d" % Num_Epochs
 	print "\n"
-"""
+
 if __name__== "__main__":
   main()
