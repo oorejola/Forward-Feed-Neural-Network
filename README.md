@@ -7,6 +7,6 @@ better /optimized tools. I.e TensorFlow, PyTorch, etc.
 
 To update:
 
--Update indecies for backpropogation algorithm for Stochastic Gradient Descent (SGD) for improved readability 
+-Update indices for backpropogation algorithm for Stochastic Gradient Descent (SGD) for improved readability 
 
 -Completely Classify FFNN following E Fiesler's paper "Neural Network Classification and Formalization"
